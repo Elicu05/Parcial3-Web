@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateLoanRequestDto } from "./dto/create-loan-request.dto";
@@ -13,8 +13,8 @@ export class LoanRequestsService {
   ) {}
 
   findAll(id : number) {
-    
-    // TODO BACK-A: recibir el filtro y aplicarlo en la consulta del repositorio.
+
+    // TODO BACK-A: recibir el filtro y aplicarlo en la consulta del repositorio.⭐
     return this.requests.find({ relations: { tool: true }, order: { id: "ASC" } });
   }
 
@@ -28,6 +28,9 @@ export class LoanRequestsService {
     const tool = await this.tools.findOneBy({ id: dto.toolId });
     if (!tool) throw new NotFoundException("Tool not found.");
 
+    if (tool.maxLoanDays > 3) {
+      throw new ConflictException("Máximo de días de prestamo superado")
+    }
     // TODO BACK-B: aplicar la regla de duración antes de guardar la solicitud.
 
     const request = this.requests.create({ purpose: dto.purpose, days: dto.days, tool });
