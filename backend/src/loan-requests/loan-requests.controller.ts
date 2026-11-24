@@ -5,6 +5,7 @@ import { CreateLoanRequestDto } from "./dto/create-loan-request.dto";
 import { LoanRequestsService } from "./loan-requests.service";
 import { ListLoanRequestsDto } from "./dto/list-loan-requests.dto";
 
+
 @UseGuards(AuthGuard("jwt"))
 @Controller("loan-requests")
 export class LoanRequestsController {
@@ -13,7 +14,7 @@ export class LoanRequestsController {
   @Get()
   findAll(@Query(requestValidationPipe) query: ListLoanRequestsDto) {
     // TODO BACK-A: recibir la consulta con @Query, validarla con el pipe y pasar el filtro.
-    return this.service.findAll();
+    return this.service.findAll(query.toolId);
   }
 
   @Get(":id")

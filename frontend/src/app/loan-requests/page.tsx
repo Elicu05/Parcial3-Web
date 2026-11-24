@@ -5,8 +5,10 @@ import type { Tool } from "../../lib/loan-types";
 type LoanRequestsPageProps = { searchParams: Promise<{ toolId?: string }> };
 
 export default async function LoanRequestsPage({ searchParams }: LoanRequestsPageProps) {
-  // Esta consulta solo prepara las opciones que se necesitan para el selector del filtro.
-  const toolsResponse = await apiFetch("/tools");
+  // Esta consulta solo prepara las opciones que se necesitan para el selector del filtro.⭐
+  const { toolId } = await searchParams;
+  const path = toolId ? `/loan-requests?id=$ {toolId}` : "/loan-requests"
+  const toolsResponse = await apiFetch(path);
   const tools: Tool[] = toolsResponse.ok ? await toolsResponse.json() : [];
 
   // TODO FRONT-A: leer searchParams y consultar las solicitudes con apiFetch.
@@ -18,9 +20,26 @@ export default async function LoanRequestsPage({ searchParams }: LoanRequestsPag
   return (
     <main>
       <h1>Loan requests</h1>
+      <div className="actions">
       <Link className="button" href="/loan-requests/new">New request</Link>
       <section className="panel" aria-label="Loan requests">
         <p>Complete the request list and its filter.</p>
+      </section>
+      </div>
+
+      <div className="actions">
+      <Link className="button" href="/loan-requests">todas</Link>
+      <Link className="button" href="/loan-requests?id=$ {toolId}">Por id</Link>   
+      </div>
+
+      <section className="tools">
+      {tools.map ((tools) => (
+        <article key={tools.id}>
+        <p>{tools.name}</p>
+        <p>{tools.maxLoanDays}</p>
+        </article>
+
+      ))}
       </section>
     </main>
   );

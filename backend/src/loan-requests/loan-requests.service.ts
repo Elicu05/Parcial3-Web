@@ -28,7 +28,7 @@ export class LoanRequestsService {
     const tool = await this.tools.findOneBy({ id: dto.toolId });
     if (!tool) throw new NotFoundException("Tool not found.");
 
-    if (tool.maxLoanDays > 3) {
+    if (!tool.maxLoanDays) {
       throw new ConflictException("Máximo de días de prestamo superado")
     }
     // TODO BACK-B: aplicar la regla de duración antes de guardar la solicitud.
